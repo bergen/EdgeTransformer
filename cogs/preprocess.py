@@ -1,4 +1,5 @@
 # Licensed under the Apache License, Version 2.0
+# Adapted from Ontanon et al. (2021), Making Transformers Solve Compositional Tasks
 
 import collections
 import copy
