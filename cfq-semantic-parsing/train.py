@@ -94,14 +94,15 @@ class WordTokenizer(PreTrainedTokenizerFast):
 
 @dataclass
 class CFQTrainingArguments(Seq2SeqTrainingArguments):
-    arch : str = "t5-small"
+    arch : str = "edge"
     from_scratch : bool = True
     reuse_first_block : bool = True
-    max_label_length : int = 1000
+    max_label_length : int = 50
     max_total_length : int = 1000
     split : str = 'random_split'  
     filter_test : bool = False
     num_training_examples : int = 0
+    seed: int = 42
 
 
 if __name__ == "__main__":
