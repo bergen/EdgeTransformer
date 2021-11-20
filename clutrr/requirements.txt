@@ -1,0 +1,4 @@
+torch==1.9.1
+packaging==20.9
+transformers==4.11.0
+pytorch-lightning==1.4.9
