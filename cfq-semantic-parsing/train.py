@@ -99,7 +99,7 @@ class CFQTrainingArguments(Seq2SeqTrainingArguments):
     reuse_first_block : bool = True
     max_label_length : int = 50
     max_total_length : int = 1000
-    split : str = 'random_split'  
+    split : str = 'mcd1'  
     filter_test : bool = False
     num_training_examples : int = 0
     seed: int = 42
@@ -111,19 +111,30 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--local_rank', type=int, default=-1)
+    parser.add_argument('--output_dir', type=str, default='output_edge')
     cmd_args = parser.parse_args()
+
+    if cmd_args.local_rank <= 0:
+        if not os.path.exists(cmd_args.output_dir):
+            os.mkdir(cmd_args.output_dir)
+        else:
+            raise ValueError("Output directory already exists")
 
     # create and parse configuration
     args = CFQTrainingArguments(
-        output_dir='edge_output',
+        output_dir=cmd_args.output_dir,
         num_train_epochs=100,
-        logging_steps=100,
+        learning_rate=0.0006,
+        max_grad_norm=100,
         per_device_train_batch_size=8,
-        per_device_eval_batch_size=4,
-        gradient_accumulation_steps=1,
+        per_device_eval_batch_size=8,
+        gradient_accumulation_steps=2,
         save_steps=1000,
-        predict_with_generate=True,
+        warmup_steps=1000,
         eval_steps=3000,
+        logging_steps=100,        
+        load_best_model_at_end=False,
+        predict_with_generate=True,
         evaluation_strategy='steps',
         metric_for_best_model='acc',
         ignore_data_skip=True,
@@ -135,21 +146,10 @@ if __name__ == "__main__":
 
     # create and parse the model configuration
     if args.arch == 'edge':
-        model_config = EdgeConfig(
-            vocab_size=1000,
-            dim=256,
-            expand_ff=4,
-            num_heads=8,
-            num_message_rounds=4,
-            share_layers=True,
-            dropout=0.1,
-            decode_from='start_to_i',
-            input_encoding='relational'
-        )
+        model_config = EdgeConfig()
     else:
         model_config = AutoConfig.from_pretrained(args.arch)
-    model_config.max_length = 1000
-    # the default max length setting does not make sense
+    model_config.max_length = 70
 
     # derive some configs settings from others
     if args.arch != 'edge':
