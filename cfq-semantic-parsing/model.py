@@ -285,18 +285,18 @@ class EdgeTransformerDecoder(nn.Module):
 class EdgeConfig(PretrainedConfig):
     #TODO: inherit from PretrainedModelConfig? But it is nice to have this as 
     # a dataclass..
- 
+
     def __init__(
         self,
-        vocab_size : int,
-        dim : int,
-        expand_ff : int,
-        num_heads : int,
-        num_message_rounds : int,
-        share_layers : bool,
-        dropout : float,
-        decode_from : str,
-        input_encoding : str,
+        vocab_size : int = 1000,
+        dim : int = 256,
+        expand_ff : int = 4,
+        num_heads : int = 8,
+        num_message_rounds : int = 4,
+        share_layers : bool = True,
+        dropout : float = 0.1,
+        decode_from : str = 'i_to_i',
+        input_encoding : str = 'relational',
         **kwargs
     ):
         kwargs['is_encoder_decoder'] = True
